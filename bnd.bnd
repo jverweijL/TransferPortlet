@@ -1,0 +1,4 @@
+Bundle-Name: TransferPortlet
+Bundle-SymbolicName: transferportlet
+Bundle-Version: 1.0.0
+Export-Package: transfer.constants
