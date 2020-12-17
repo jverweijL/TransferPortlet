@@ -2,7 +2,7 @@
 
 <portlet:resourceURL id="/transfer/download" var="downloadURL"/>
 
-<b>Please Upload a Document</b>
+<b>Get your download</b>
 
 <aui:form action="<%= downloadURL %>" method="post" name="fm" target="_blank">
 	<aui:input name="uuid" type="hidden" value="abc"/>
@@ -17,4 +17,6 @@
 	</aui:button-row>
 </aui:form>
 
+<!--
 <%= downloadURL %>
+-->

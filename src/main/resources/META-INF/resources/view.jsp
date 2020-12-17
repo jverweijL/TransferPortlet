@@ -33,5 +33,7 @@
 	</aui:button-row>
 </aui:form>
 
+<!--
 <%= downloadURL %>
 <%= downloaderURL %>
+-->

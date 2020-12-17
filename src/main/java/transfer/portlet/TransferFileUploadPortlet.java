@@ -9,6 +9,7 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailService;
+import com.liferay.petra.content.ContentUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.PwdEncryptorException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -79,7 +80,7 @@ public class TransferFileUploadPortlet extends MVCPortlet {
 	}
 
 	private void sendMessage(ActionRequest actionRequest, FileEntry fileEntry) {
-		System.out.println("Sending mail...");
+		Class<?> clazz = getClass();
 
 		LiferayPortletURL downloadUrl =  PortletURLFactoryUtil.create(actionRequest, PortalUtil.getPortletId(actionRequest), PortletRequest.RENDER_PHASE);
 		downloadUrl.setParameter("mvcRenderCommandName","/transfer/r/download");
@@ -89,14 +90,11 @@ public class TransferFileUploadPortlet extends MVCPortlet {
 
 		//todo get these from config and replace variables
 		String subject = "File Transfer is ready for you!";
-		StringBuilder body = new StringBuilder();
-		body.append(uploadPortletRequest.getParameter("message"));
-		body.append(HTMLBREAK);
-		body.append(fileEntry.getUuid());
-		body.append(HTMLBREAK);
-		body.append(fileEntry.getGroupId());
-		body.append(HTMLBREAK);
-		body.append(downloadUrl.toString());
+		String mailtemplate = ContentUtil.get(clazz.getClassLoader(),"META-INF/resources/template/email.htm");
+		mailtemplate = mailtemplate.replaceAll("\\$\\{DOWNLOAD_URL\\}",downloadUrl.toString());
+		mailtemplate = mailtemplate.replaceAll("\\$\\{MESSAGE\\}",uploadPortletRequest.getParameter("message"));
+		mailtemplate = mailtemplate.replaceAll("\\$\\{PASSWORD\\}",uploadPortletRequest.getParameter("password"));
+		StringBuilder body = new StringBuilder(mailtemplate);
 
 		// from
 		InternetAddress from = new InternetAddress();
@@ -107,11 +105,7 @@ public class TransferFileUploadPortlet extends MVCPortlet {
 		to.setAddress(uploadPortletRequest.getParameter("to"));
 
 		MailMessage mailMessage = new MailMessage(from,to,subject,body.toString(),Boolean.TRUE);
-
-		System.out.println(_mailService.getSession().getProperties());
-
 		_mailService.sendEmail(mailMessage);
-		System.out.println("Sending mail... almost there");
 	}
 
 	public Folder createFolder(ActionRequest actionRequest, ThemeDisplay themeDisplay)
@@ -188,7 +182,7 @@ public class TransferFileUploadPortlet extends MVCPortlet {
 
 		String password = uploadPortletRequest.getParameter("password").trim();
 		if (!password.isEmpty()) {
-			password = PasswordEncryptorUtil.encrypt(password);
+			password = PasswordEncryptorUtil.encrypt(PasswordEncryptorUtil.TYPE_SHA_256,password,"");
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
