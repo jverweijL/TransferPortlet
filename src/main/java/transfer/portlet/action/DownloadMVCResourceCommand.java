@@ -28,6 +28,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 
 @Component(
         immediate = true,
@@ -47,7 +49,8 @@ public class DownloadMVCResourceCommand implements MVCResourceCommand {
 
         try {
             FileEntry f = DLAppServiceUtil.getFileEntryByUuidAndGroupId(portletRequest.getParameter("uuid"),themeDisplay.getLayout().getGroupId());
-            // TODO check password
+
+            //check password
             String password = portletRequest.getParameter("password").trim();
             if (!password.isEmpty()) {
                 password = PasswordEncryptorUtil.encrypt(PasswordEncryptorUtil.TYPE_SHA_256,password,"");
@@ -59,19 +62,21 @@ public class DownloadMVCResourceCommand implements MVCResourceCommand {
                 isValidPassword = Boolean.TRUE;
             }
 
-            Boolean isExpired = Boolean.TRUE;
-            futureDate = DateUtil.
-            if (jsonNode.get("password").asText().isEmpty() || jsonNode.get("password").asText().equals(password)) {
+            // check expiry
+            Boolean isExpired = Boolean.FALSE;
+            Calendar now = Calendar.getInstance();
+            Calendar expiryDate = Calendar.getInstance();
+            expiryDate.setTime(f.getCreateDate());
+            expiryDate.add(Calendar.DATE,jsonNode.get("expires").asInt());
+            if (now.after(expiryDate)) {
                 isExpired = Boolean.TRUE;
             }
-
-            // TODO check expired
 
             if (isValidPassword && !isExpired) {
                 // create the zip filename
                 String zipFileName = f.getFileName() + ".zip";
                 ZipWriter zipWriter = ZipWriterFactoryUtil.getZipWriter();
-                zipWriter.addEntry(StringPool.SLASH + f.getFileName(), f.getContentStream());
+                zipWriter.addEntry(StringPool.SLASH + jsonNode.get("filename").asText(), f.getContentStream());
                 InputStream inputStream = new FileInputStream(zipWriter.getFile());
 
                 // send the file back to the browser.

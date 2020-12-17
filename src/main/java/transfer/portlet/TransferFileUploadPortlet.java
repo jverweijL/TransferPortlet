@@ -190,6 +190,7 @@ public class TransferFileUploadPortlet extends MVCPortlet {
 		ObjectNode user = mapper.createObjectNode();
 		user.put("expires", uploadPortletRequest.getParameter("expires"));
 		user.put("password", password);
+		user.put("filename", fileName);
 		String description = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user);
 
 		long repositoryId = themeDisplay.getScopeGroupId();
