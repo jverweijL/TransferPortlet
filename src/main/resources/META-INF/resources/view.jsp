@@ -7,7 +7,7 @@
 	<portlet:param name="uuid" value="xyz" />
 </portlet:renderURL>
 
-<b>Please Upload a Document</b>
+<b>Please upload your file</b>
 
 <aui:form action="<%= uploadURL %>" method="post" name="fm" enctype="multipart/form-data">
 	<aui:fieldset-group markupView="lexicon">
@@ -29,7 +29,7 @@
 	</aui:fieldset-group>
 
 	<aui:button-row>
-		<aui:button cssClass="btn-lg" type="submit"/>
+		<aui:button cssClass="btn-lg" type="submit" value="send"/>
 	</aui:button-row>
 </aui:form>
 
