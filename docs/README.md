@@ -20,7 +20,7 @@ Built with [Liferay Workspace](https://help.liferay.com/hc/en-us/articles/360029
 
 ## How to Build and Deploy to Liferay
 
-Follow the steps below to build and deploy or copy the modules from the [releases](../../../releases) page to your Liferay's deploy folder.
+Follow the steps below to build and deploy or copy the modules from the [releases](../../../releases/latest) page to your Liferay's deploy folder.
 
 In order to build or deploy this module you will need to [install Blade CLI](https://help.liferay.com/hc/en-us/articles/360028833852-Installing-Blade-CLI).
 
